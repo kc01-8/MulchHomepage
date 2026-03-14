@@ -330,40 +330,55 @@
             line-height: 1.7;
         }
 
-        /* ── feature grid (unified bordered container) ─────────── */
+        /* ── feature grid (individual cards) ──────────────────── */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
+            gap: 1rem;
         }
 
         .feature-card {
             background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 2rem;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--purple-600), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
         .feature-card:hover {
             background: var(--bg-card-hover);
+            border-color: rgba(147, 51, 234, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(147, 51, 234, 0.08);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
 
         .feature-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             background: rgba(147, 51, 234, 0.1);
-            border: 1px solid rgba(147, 51, 234, 0.2);
+            border: 1px solid rgba(147, 51, 234, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1.25rem;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
         }
 
         .feature-card h3 {
@@ -378,39 +393,41 @@
             line-height: 1.6;
         }
 
-        /* ── software table ────────────────────────────────────── */
+        /* ── software grid (individual cards) ─────────────────── */
         .software-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
+            gap: 0.875rem;
         }
 
         .software-item {
             background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
             padding: 1.25rem 1.5rem;
             display: flex;
             align-items: center;
             gap: 1rem;
-            transition: background 0.2s;
+            transition: all 0.25s ease;
         }
 
         .software-item:hover {
             background: var(--bg-card-hover);
+            border-color: rgba(147, 51, 234, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 12px rgba(147, 51, 234, 0.06);
         }
 
         .software-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
             background: rgba(147, 51, 234, 0.08);
+            border: 1px solid rgba(147, 51, 234, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             flex-shrink: 0;
         }
 
@@ -496,7 +513,7 @@
         .highlights {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.25rem;
+            gap: 1rem;
             margin-top: 3rem;
         }
 
@@ -504,8 +521,15 @@
             text-align: center;
             padding: 2rem 1rem;
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: 14px;
             background: var(--bg-card);
+            transition: all 0.25s ease;
+        }
+
+        .highlight-item:hover {
+            border-color: rgba(147, 51, 234, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 12px rgba(147, 51, 234, 0.06);
         }
 
         .highlight-value {
@@ -663,7 +687,7 @@
 <!-- ── Features ────────────────────────────────────────────────── -->
 <section id="features">
     <div class="section-label">Why Mulch</div>
-    <h2 class="section-title">Tired of windows and distro hopping?<br>Want something that just works?</h2>
+    <h2 class="section-title">Opinionated where it matters.<br>Transparent everywhere else.</h2>
     <p class="section-desc">
         A minimal KDE Plasma desktop with hand-picked software, offline installation, and real privacy tools.
     </p>
