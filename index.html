@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mulch Linux</title>
+    <meta name="description" content="A curated Arch Linux distribution. Private by default. Game-ready out of the box.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        @font-face {
+            font-family: 'Cerulean NF';
+            src: url('fonts/CeruleanNF.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --purple-50: #faf5ff;
+            --purple-100: #f3e8ff;
+            --purple-200: #e9d5ff;
+            --purple-300: #d8b4fe;
+            --purple-400: #c084fc;
+            --purple-500: #a855f7;
+            --purple-600: #9333ea;
+            --purple-700: #7e22ce;
+            --purple-800: #6b21a8;
+            --purple-900: #581c87;
+            --bg-primary: #09090b;
+            --bg-secondary: #0f0f13;
+            --bg-card: #16161d;
+            --bg-card-hover: #1c1c26;
+            --border: #23232f;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --glow: rgba(147, 51, 234, 0.15);
+            --glow-strong: rgba(147, 51, 234, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--purple-800) var(--bg-primary);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ── noise texture overlay ─────────────────────────────── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── navigation ────────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: 'Cerulean NF', 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--purple-400);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--purple-400);
+        }
+
+        /* ── hero ──────────────────────────────────────────────── */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            z-index: 1;
+        }
+
+        /* purple glow orbs */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--glow-strong) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            background: var(--bg-card);
+        }
+
+        .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--purple-500);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero-title {
+            font-family: 'Cerulean NF', 'JetBrains Mono', monospace;
+            font-size: clamp(4rem, 12vw, 9rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(
+                135deg,
+                var(--purple-300) 0%,
+                var(--purple-400) 25%,
+                var(--purple-500) 50%,
+                var(--purple-600) 75%,
+                var(--purple-400) 100%
+            );
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        .hero-subtitle strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.8rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--purple-600);
+            color: white;
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--purple-500);
+            box-shadow: 0 0 50px rgba(147, 51, 234, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--purple-800);
+            transform: translateY(-2px);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ── scroll indicator ──────────────────────────────────── */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            animation: bob 2s ease-in-out infinite;
+        }
+
+        @keyframes bob {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        .scroll-indicator svg {
+            width: 20px;
+            height: 20px;
+            opacity: 0.5;
+        }
+
+        /* ── sections ──────────────────────────────────────────── */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--purple-400);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-desc {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 3.5rem;
+            line-height: 1.7;
+        }
+
+        /* ── feature grid ──────────────────────────────────────── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--purple-600), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--purple-800);
+            background: var(--bg-card-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(147, 51, 234, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            font-size: 1.3rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ── software table ────────────────────────────────────── */
+        .software-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .software-item {
+            background: var(--bg-card);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: background 0.2s;
+        }
+
+        .software-item:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .software-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(147, 51, 234, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .software-info {
+            min-width: 0;
+        }
+
+        .software-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .software-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ── install section ───────────────────────────────────── */
+        .install-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .install-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .install-header .dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .install-header .dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .install-header .dots span:nth-child(1) { background: #ef4444; }
+        .install-header .dots span:nth-child(2) { background: #eab308; }
+        .install-header .dots span:nth-child(3) { background: #22c55e; }
+
+        .install-header .tab {
+            margin-left: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .install-code {
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 2;
+            overflow-x: auto;
+        }
+
+        .install-code .comment {
+            color: var(--text-muted);
+        }
+
+        .install-code .command {
+            color: var(--text-primary);
+        }
+
+        .install-code .command::before {
+            content: '$ ';
+            color: var(--purple-400);
+        }
+
+        .install-code .output {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* ── highlights strip ──────────────────────────────────── */
+        .highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-top: 3rem;
+        }
+
+        .highlight-item {
+            text-align: center;
+            padding: 2rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--bg-card);
+        }
+
+        .highlight-value {
+            font-family: 'Cerulean NF', 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--purple-400);
+            margin-bottom: 0.25rem;
+        }
+
+        .highlight-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ── footer ────────────────────────────────────────────── */
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Cerulean NF', 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--purple-400);
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--purple-400);
+        }
+
+        /* ── responsive ────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.75rem 1.25rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.8rem;
+            }
+
+            .hero {
+                padding: 7rem 1.5rem 3rem;
+            }
+
+            section {
+                padding: 4rem 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .software-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .scroll-indicator {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 0.75rem;
+            }
+
+            .highlights {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Navigation ──────────────────────────────────────────────── -->
+<nav>
+    <a href="#" class="nav-logo">mulch</a>
+    <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#software">Software</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="https://github.com/kc01-8/mulch-linux" target="_blank">GitHub</a></li>
+    </ul>
+</nav>
+
+<!-- ── Hero ────────────────────────────────────────────────────── -->
+<header class="hero">
+    <div class="hero-badge">
+        <span class="dot"></span>
+        Built on Arch Linux
+    </div>
+
+    <h1 class="hero-title">mulch</h1>
+
+    <p class="hero-subtitle">
+        A curated Arch distribution.<br>
+        <strong>Private by default.</strong> Game-ready out of the box.
+    </p>
+
+    <div class="hero-actions">
+        <a href="#install" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download ISO
+        </a>
+        <a href="https://github.com/kc01-8/mulch-linux" target="_blank" class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            Source Code
+        </a>
+    </div>
+
+    <div class="scroll-indicator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+</header>
+
+<!-- ── Features ────────────────────────────────────────────────── -->
+<section id="features">
+    <div class="section-label">Why Mulch</div>
+    <h2 class="section-title">Opinionated where it matters.<br>Transparent everywhere else.</h2>
+    <p class="section-desc">
+        A minimal KDE Plasma desktop with hand-picked software, offline installation, and real privacy tools — not just defaults kc01-8'll replace.
+    </p>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Private by Default</h3>
+            <p>Mullvad VPN and Mullvad Browser ship pre-installed. Tor Browser included. KeePassXC with browser integration configured out of the box.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎮</div>
+            <h3>Game-Ready</h3>
+            <p>Native Steam, Wine-staging, Gamemode, and every lib32 dependency pre-installed. Kernel tweaks for esync/fsync. Zero setup to start playing.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">✈️</div>
+            <h3>Fully Offline Install</h3>
+            <p>Every package is on the ISO. No internet connection needed during installation. Boot it, run the installer, reboot into a complete system.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Zen Kernel</h3>
+            <p>Linux Zen with BORE scheduler and full preemption. Lower input latency, fewer frame drops, smoother multitasking. Optional vanilla or LTS.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🖥️</div>
+            <h3>Minimal KDE</h3>
+            <p>Plasma Desktop with only Dolphin, Konsole, Spectacle, and Ark. No bloat. No PIM suite. No office suite. Add what kc01-8 want via yay.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>LUKS Encryption</h3>
+            <p>Optional full-disk encryption offered during install. Btrfs with subvolumes or ext4. zram swap by default. kc01-8r choice at every step.</p>
+        </div>
+    </div>
+
+    <div class="highlights">
+        <div class="highlight-item">
+            <div class="highlight-value">0</div>
+            <div class="highlight-label">Flatpaks</div>
+        </div>
+        <div class="highlight-item">
+            <div class="highlight-value">0</div>
+            <div class="highlight-label">Snaps</div>
+        </div>
+        <div class="highlight-item">
+            <div class="highlight-value">yay</div>
+            <div class="highlight-label">AUR helper included</div>
+        </div>
+        <div class="highlight-item">
+            <div class="highlight-value">micro</div>
+            <div class="highlight-label">Default editor</div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Software ────────────────────────────────────────────────── -->
+<section id="software">
+    <div class="section-label">Included</div>
+    <h2 class="section-title">Everything kc01-8 need. Nothing kc01-8 don't.</h2>
+    <p class="section-desc">
+        Each application was chosen deliberately. No duplicates, no filler, no "we ship three browsers and four text editors."
+    </p>
+
+    <div class="software-grid">
+        <div class="software-item">
+            <div class="software-icon">🌐</div>
+            <div class="software-info">
+                <div class="software-name">Mullvad Browser</div>
+                <div class="software-desc">Privacy browser + KeePassXC extension</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">🧅</div>
+            <div class="software-info">
+                <div class="software-name">Tor Browser</div>
+                <div class="software-desc">Anonymous browsing</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">🔑</div>
+            <div class="software-info">
+                <div class="software-name">KeePassXC</div>
+                <div class="software-desc">Offline password manager</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">🛡️</div>
+            <div class="software-info">
+                <div class="software-name">Mullvad VPN</div>
+                <div class="software-desc">VPN client, daemon auto-enabled</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">🎮</div>
+            <div class="software-info">
+                <div class="software-name">Steam</div>
+                <div class="software-desc">Native package, auto-launches</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">🍷</div>
+            <div class="software-info">
+                <div class="software-name">Wine Staging</div>
+                <div class="software-desc">Windows compatibility layer</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">▶️</div>
+            <div class="software-info">
+                <div class="software-name">mpv</div>
+                <div class="software-desc">Video player</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">🍓</div>
+            <div class="software-info">
+                <div class="software-name">Strawberry</div>
+                <div class="software-desc">Music player</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">🖼️</div>
+            <div class="software-info">
+                <div class="software-name">qimgv</div>
+                <div class="software-desc">Image viewer</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">📄</div>
+            <div class="software-info">
+                <div class="software-name">Zathura</div>
+                <div class="software-desc">PDF viewer (mupdf backend)</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">📝</div>
+            <div class="software-info">
+                <div class="software-name">Obsidian</div>
+                <div class="software-desc">Markdown knowledge base</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">💬</div>
+            <div class="software-info">
+                <div class="software-name">Signal</div>
+                <div class="software-desc">Encrypted messaging</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">🎨</div>
+            <div class="software-info">
+                <div class="software-name">LazPaint</div>
+                <div class="software-desc">Image editor</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">⬇️</div>
+            <div class="software-info">
+                <div class="software-name">qBittorrent</div>
+                <div class="software-desc">Torrent client</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">⌨️</div>
+            <div class="software-info">
+                <div class="software-name">micro</div>
+                <div class="software-desc">Terminal text editor (default)</div>
+            </div>
+        </div>
+        <div class="software-item">
+            <div class="software-icon">📦</div>
+            <div class="software-info">
+                <div class="software-name">Ark</div>
+                <div class="software-desc">Archive manager + Dolphin integration</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Install ─────────────────────────────────────────────────── -->
+<section id="install">
+    <div class="section-label">Get Started</div>
+    <h2 class="section-title">Boot. Install. Done.</h2>
+    <p class="section-desc">
+        Write the ISO to a USB drive. Boot it. Run one command. The guided installer handles partitioning, encryption, drivers, and everything else.
+    </p>
+
+    <div class="install-block">
+        <div class="install-header">
+            <div class="dots">
+                <span></span><span></span><span></span>
+            </div>
+            <span class="tab">konsole</span>
+        </div>
+        <div class="install-code">
+            <div class="comment"># Write ISO to USB (replace /dev/sdX)</div>
+            <div class="command">sudo dd if=mulch-2025.07.iso of=/dev/sdX bs=4M status=progress</div>
+            <br>
+            <div class="comment"># Boot the USB, then run:</div>
+            <div class="command">install-system</div>
+            <br>
+            <div class="output">  ╔══════════════════════════════════════════════╗</div>
+            <div class="output">  ║       Welcome to Mulch Linux Installer       ║</div>
+            <div class="output">  ║                                              ║</div>
+            <div class="output">  ║       No internet connection required.       ║</div>
+            <div class="output">  ╚══════════════════════════════════════════════╝</div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 3rem;">
+        <a href="https://github.com/kc01-8/mulch-linux/releases" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Latest ISO
+        </a>
+    </div>
+</section>
+
+<!-- ── Footer ──────────────────────────────────────────────────── -->
+<footer>
+    <div class="footer-logo">mulch</div>
+    <p class="footer-text">Built on Arch Linux. Not affiliated with Arch Linux or any included project.</p>
+    <div class="footer-links">
+        <a href="https://github.com/kc01-8/mulch-linux">GitHub</a>
+        <a href="https://github.com/kc01-8/mulch-linux/releases">Releases</a>
+        <a href="https://github.com/kc01-8/mulch-linux/issues">Issues</a>
+        <a href="https://github.com/kc01-8/mulch-linux/blob/main/LICENSE">License</a>
+    </div>
+</footer>
+
+</body>
+</html>
