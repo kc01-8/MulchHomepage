@@ -126,15 +126,15 @@
             z-index: 1;
         }
 
-        /* purple glow orbs */
+        /* purple glow orbs – centered on hero content */
         .hero::before {
             content: '';
             position: absolute;
-            top: -20%;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 800px;
+            transform: translate(-50%, -50%);
+            width: min(800px, 90vw);
+            height: min(800px, 90vw);
             background: radial-gradient(circle, var(--glow-strong) 0%, transparent 70%);
             pointer-events: none;
             z-index: -1;
@@ -143,7 +143,7 @@
         .hero::after {
             content: '';
             position: absolute;
-            top: 30%;
+            top: 55%;
             right: -10%;
             width: 400px;
             height: 400px;
@@ -330,42 +330,27 @@
             line-height: 1.7;
         }
 
-        /* ── feature grid ──────────────────────────────────────── */
+        /* ── feature grid (unified bordered container) ─────────── */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
         }
 
         .feature-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
             padding: 2rem;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--purple-600), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
         .feature-card:hover {
-            border-color: var(--purple-800);
             background: var(--bg-card-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
         }
 
         .feature-icon {
@@ -576,6 +561,12 @@
         }
 
         /* ── responsive ────────────────────────────────────────── */
+        @media (max-width: 960px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             nav {
                 padding: 0.75rem 1.25rem;
@@ -736,6 +727,7 @@
     <h2 class="section-title">Everything you need. Nothing you don't.</h2>
     <p class="section-desc">
         Each application was chosen deliberately. No bloat.
+    </p>
 
     <div class="software-grid">
         <div class="software-item">
