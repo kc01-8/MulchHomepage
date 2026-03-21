@@ -1269,7 +1269,8 @@ fetch('https://mulch.kc01.workers.dev')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
         const el = document.getElementById('dl-count');
-        if (d?.counts?.all_time) el.textContent = Number(d.counts.all_time).toLocaleString();
+        const key = Object.keys(d)[0];
+        if (key && d[key].all_time !== undefined) el.textContent = Number(d[key].all_time).toLocaleString();
     })
     .catch(() => {});
 </script>
