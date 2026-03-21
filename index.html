@@ -898,6 +898,10 @@
             <div class="highlight-value">micro</div>
             <div class="highlight-label">Default terminal editor</div>
         </div>
+        <div class="highlight-item" role="listitem">
+            <div class="highlight-value" id="dl-count">—</div>
+            <div class="highlight-label">Downloads</div>
+        </div>
     </div>
 </section>
 
@@ -1260,6 +1264,15 @@
             }
         });
     });
+
+    // Download counter (Internet Archive)
+    fetch('https://be-api.us.archive.org/views/v1/short/mulch-linux-2026.03.21-x86_64.iso')
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(d => {
+            const el = document.getElementById('dl-count');
+            if (d?.counts?.all_time) el.textContent = Number(d.counts.all_time).toLocaleString();
+        })
+        .catch(() => {});
 </script>
 
 </body>
