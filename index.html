@@ -898,10 +898,6 @@
             <div class="highlight-value">micro</div>
             <div class="highlight-label">Default terminal editor</div>
         </div>
-        <div class="highlight-item" role="listitem">
-            <div class="highlight-value" id="dl-count">—</div>
-            <div class="highlight-label">Downloads</div>
-        </div>
     </div>
 </section>
 
@@ -1264,15 +1260,6 @@
             }
         });
     });
-
-fetch('https://mulch.kc01.workers.dev')
-    .then(r => r.ok ? r.json() : Promise.reject())
-    .then(d => {
-        const el = document.getElementById('dl-count');
-        const key = Object.keys(d)[0];
-        if (key && d[key].all_time !== undefined) el.textContent = Number(d[key].all_time).toLocaleString();
-    })
-    .catch(() => {});
 </script>
 
 </body>
